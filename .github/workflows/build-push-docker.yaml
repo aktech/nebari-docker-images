@@ -50,15 +50,18 @@ jobs:
           - jupyterhub
           - dask-worker
           - workflow-controller
-        platform:
+        processor:
           - gpu
           - cpu
+        platform:
+          - linux/amd64
+          - linux/arm64
         exclude:
           # excludes JupyterHub/GPU, Workflow Controller/GPU
           - dockerfile: jupyterhub
-            platform: gpu
+            processor: gpu
           - dockerfile: workflow-controller
-            platform: gpu
+            processor: gpu
 
     steps:
       - name: "Checkout Repository 🛎️"
@@ -82,9 +85,9 @@ jobs:
           password: ${{ secrets.QUAY_TOKEN }}
 
       - name: "Set BASE_IMAGE and Image Suffix 📷"
-        if: ${{ matrix.platform == 'gpu' }}
+        if: ${{ matrix.processor == 'gpu' }}
         run: |
-          echo "GPU Platform Matrix"
+          echo "GPU Processor Matrix"
           echo "BASE_IMAGE=$GPU_BASE_IMAGE" >> $GITHUB_ENV
           echo "IMAGE_SUFFIX=-$GPU_IMAGE_SUFFIX" >> $GITHUB_ENV
 
@@ -119,4 +122,4 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: BASE_IMAGE=${{ env.BASE_IMAGE }}
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{ matrix.platform }}

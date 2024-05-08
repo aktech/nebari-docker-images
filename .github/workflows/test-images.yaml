@@ -36,13 +36,15 @@ jobs:
           - jupyterlab
           - jupyterhub
           - dask-worker
-        platform:
+        processor:
           - gpu
           - cpu
+        platform:
+          - 
         exclude:
           # excludes JupyterHub/GPU
           - dockerfile: jupyterhub
-            platform: gpu
+            processor: gpu
     steps:
       - name: Checkout Repository 🛎
         uses: actions/checkout@v3
@@ -55,9 +57,9 @@ jobs:
           error_level: 0
 
       - name: "Set BASE_IMAGE and Image Suffix 📷"
-        if: ${{ matrix.platform == 'gpu' }}
+        if: ${{ matrix.processor == 'gpu' }}
         run: |
-          echo "GPU Platform Matrix"
+          echo "GPU Processor Matrix"
           echo "BASE_IMAGE=$GPU_BASE_IMAGE" >> $GITHUB_ENV
           echo "IMAGE_SUFFIX=-$GPU_IMAGE_SUFFIX" >> $GITHUB_ENV
 
@@ -65,4 +67,4 @@ jobs:
         run: |
           docker build -t ${DOCKER_ORG}/${{ matrix.dockerfile }}${{ env.IMAGE_SUFFIX }}:${{ env.GITHUB_SHA }} \
           --build-arg BASE_IMAGE=$BASE_IMAGE \
-          -f Dockerfile.${{ matrix.dockerfile }} .
+          -f Dockerfile.${{ matrix.dockerfile }} --platform ${{ matrix.platform }} .
