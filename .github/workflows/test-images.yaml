@@ -40,7 +40,8 @@ jobs:
           - gpu
           - cpu
         platform:
-          - 
+          - linux/amd64
+          - linux/arm64
         exclude:
           # excludes JupyterHub/GPU
           - dockerfile: jupyterhub
