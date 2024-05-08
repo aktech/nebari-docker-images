@@ -65,6 +65,7 @@ jobs:
 
       - name: Build Image 🛠
         run: |
-          docker build -t ${DOCKER_ORG}/${{ matrix.dockerfile }}${{ env.IMAGE_SUFFIX }}:${{ env.GITHUB_SHA }} \
-          --build-arg BASE_IMAGE=$BASE_IMAGE --platform ${{ matrix.platform }} \
+          docker build --platform ${{ matrix.platform }} \
+          -t ${DOCKER_ORG}/${{ matrix.dockerfile }}${{ env.IMAGE_SUFFIX }}:${{ env.GITHUB_SHA }} \
+          --build-arg BASE_IMAGE=$BASE_IMAGE \
           -f Dockerfile.${{ matrix.dockerfile }} .
